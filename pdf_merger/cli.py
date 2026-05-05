@@ -1,0 +1,53 @@
+"""CLI: merge two PDFs (first input, then second) into one output file."""
+
+from __future__ import annotations
+
+import argparse
+import logging
+import sys
+from pathlib import Path
+
+from pdf_merger.merge import merge_two_pdfs
+
+
+def _parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(
+        description="Merge two PDFs: all pages from PDF 1, then all pages from PDF 2.",
+    )
+    p.add_argument("pdf1", type=Path, help="Path to the first PDF (pages come first)")
+    p.add_argument("pdf2", type=Path, help="Path to the second PDF")
+    p.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        required=True,
+        help="Path for the merged PDF",
+    )
+    p.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Log debug messages",
+    )
+    return p.parse_args()
+
+
+def main() -> int:
+    args = _parse_args()
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
+    try:
+        merge_two_pdfs(args.pdf1, args.pdf2, args.output)
+    except (FileNotFoundError, ValueError) as e:
+        logging.error("%s", e)
+        return 1
+    except OSError as e:
+        logging.error("Could not read or write files: %s", e)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

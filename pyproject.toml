@@ -1,0 +1,15 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pdf-merger"
+version = "0.1.0"
+description = "Merge two PDF files in order (PDF1 then PDF2)."
+requires-python = ">=3.12"
+dependencies = [
+    "pypdf>=6.9.2",
+]
+
+[project.scripts]
+pdf-merge = "pdf_merger.cli:main"
