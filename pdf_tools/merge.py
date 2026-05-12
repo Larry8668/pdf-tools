@@ -96,7 +96,8 @@ def _prepare_image_for_pdf(image: Image.Image) -> Image.Image:
         image.mode == "P" and "transparency" in image.info
     ):
         background = Image.new("RGB", image.size, "white")
-        background.paste(image.convert("RGBA"), mask=image.convert("RGBA").getchannel("A"))
+        rgba = image.convert("RGBA")
+        background.paste(rgba, mask=rgba.getchannel("A"))
         return background
     if image.mode != "RGB":
         return image.convert("RGB")

@@ -1,8 +1,8 @@
-# PDF merger
+# PDF tools
 
 Put PDFs in **`pdfs/`** and images in **`images/`**. The input order controls the output order.
 
-## Run
+## Merge or convert
 
 From the project root:
 
@@ -21,4 +21,16 @@ uv run pdf-merge images/photo.png -o pdfs/photo.pdf
 
 Supported image types: `.bmp`, `.gif`, `.jpeg`, `.jpg`, `.png`, `.tif`, `.tiff`, `.webp`.
 
-Optional: `uv run pdf-merge ... -v` for debug logs.
+## Remove pages
+
+Create a new PDF with selected pages removed. The original PDF is not modified.
+
+```bash
+uv run pdf-remove-pages pdfs/input.pdf --pages "1,3,5-7" -o pdfs/output.pdf
+```
+
+Page numbers are 1-based. The example removes pages 1, 3, 5, 6, and 7.
+
+The output path must be different from the input path, so commands cannot overwrite the original PDF.
+
+Optional: add `-v` to either command for debug logs.

@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-from pdf_merger.merge import merge_files
+from pdf_tools.merge import merge_files
 
 
 def _parse_args() -> argparse.Namespace:
