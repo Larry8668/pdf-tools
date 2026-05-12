@@ -5,13 +5,15 @@ build-backend = "hatchling.build"
 [project]
 name = "pdf-tools"
 version = "0.1.0"
-description = "Small PDF toolkit for merging, converting images, and removing pages."
+description = "Small PDF toolkit for merging, converting images, removing pages, and redacting text."
 requires-python = ">=3.12"
 dependencies = [
     "pillow>=12.2.0",
+    "pymupdf>=1.27.2.3",
     "pypdf>=6.9.2",
 ]
 
 [project.scripts]
 pdf-merge = "pdf_tools.cli_merge:main"
 pdf-remove-pages = "pdf_tools.cli_remove_pages:main"
+pdf-redact = "pdf_tools.cli_redact:main"
