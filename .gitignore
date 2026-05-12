@@ -12,6 +12,10 @@ wheels/
 # PDFs (inputs / outputs)
 *.pdf
 
+# Images (inputs)
+images/*
+!images/.gitkeep
+
 .DS_Store
 
 .python-version

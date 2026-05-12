@@ -1,4 +1,4 @@
-"""CLI: merge PDFs in order into one output file."""
+"""CLI: merge PDFs and images in order into one output PDF."""
 
 from __future__ import annotations
 
@@ -7,18 +7,18 @@ import logging
 import sys
 from pathlib import Path
 
-from pdf_merger.merge import merge_pdfs
+from pdf_merger.merge import merge_files
 
 
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Merge PDFs in order: all pages from each input, then the next.",
+        description="Merge or convert PDFs and images into one output PDF.",
     )
     p.add_argument(
-        "pdfs",
+        "inputs",
         type=Path,
         nargs="+",
-        help="Input PDF paths, in the order they should appear",
+        help="Input PDF/image paths, in the order they should appear",
     )
     p.add_argument(
         "-o",
@@ -43,7 +43,7 @@ def main() -> int:
         format="%(levelname)s: %(message)s",
     )
     try:
-        merge_pdfs(args.pdfs, args.output)
+        merge_files(args.inputs, args.output)
     except (FileNotFoundError, ValueError) as e:
         logging.error("%s", e)
         return 1

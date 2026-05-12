@@ -5,9 +5,10 @@ build-backend = "hatchling.build"
 [project]
 name = "pdf-merger"
 version = "0.1.0"
-description = "Merge PDF files in order."
+description = "Merge PDFs and images in order."
 requires-python = ">=3.12"
 dependencies = [
+    "pillow>=12.2.0",
     "pypdf>=6.9.2",
 ]
 
