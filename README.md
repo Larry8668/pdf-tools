@@ -71,4 +71,40 @@ This works on searchable/text PDFs. Scanned PDFs or image-only PDFs may not work
 
 The output path must be different from the input path, so commands cannot overwrite the original PDF.
 
+## Redact an area or image block
+
+Render a page preview first:
+
+```bash
+uv run pdf-render-page pdfs/input.pdf --page 1 -o previews/page-1.png
+```
+
+The command prints the PDF size, image size, and render scale. Open the PNG and note the rectangle pixel coordinates for the area you want to hide.
+
+For easier coordinate picking, render with a labeled grid:
+
+```bash
+uv run pdf-render-page pdfs/input.pdf --page 1 --grid-size 100 -o previews/page-1-grid.png
+```
+
+Use a smaller grid size, like `--grid-size 50`, when you need a tighter estimate.
+
+Then redact that rectangle:
+
+```bash
+uv run pdf-redact-area pdfs/input.pdf --page 1 --pixels "200,300,600,420" --scale 2 -o pdfs/redacted.pdf
+```
+
+Pixel coordinates use `x0,y0,x1,y1` from the rendered preview. The `--scale` value should match the scale printed by `pdf-render-page`.
+
+You can also use direct PDF-point coordinates:
+
+```bash
+uv run pdf-redact-area pdfs/input.pdf --area "1:100,150,300,210" -o pdfs/redacted.pdf
+```
+
+By default, areas are blacked out. Use `--mode remove` or `--mode white` for a blank white area.
+
+The output path must be different from the input path, so commands cannot overwrite the original PDF.
+
 Optional: add `-v` to any command for debug logs.
