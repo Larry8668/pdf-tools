@@ -2,12 +2,19 @@
 
 Put PDFs in **`pdfs/`** and images in **`images/`**. The input order controls the output order.
 
+## Setup
+
+Requires Python and `uv`.
+
+```bash
+uv sync
+```
+
 ## Merge or convert
 
 From the project root:
 
 ```bash
-uv sync
 uv run pdf-merge pdfs/first.pdf images/photo.png pdfs/second.pdf -o pdfs/merged.pdf
 ```
 
