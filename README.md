@@ -28,6 +28,28 @@ uv run pdf-merge images/photo.png -o pdfs/photo.pdf
 
 Supported image types: `.bmp`, `.gif`, `.jpeg`, `.jpg`, `.png`, `.tif`, `.tiff`, `.webp`.
 
+## Compress
+
+Create a smaller PDF copy. The original PDF is not modified.
+
+Target a percentage of the original file size:
+
+```bash
+uv run pdf-compress pdfs/input.pdf --size-percent 10 -o pdfs/compressed.pdf
+```
+
+The example above aims for about 10% of the input size, so roughly 100 KB from a 1 MB file.
+
+Or set image quality directly:
+
+```bash
+uv run pdf-compress pdfs/input.pdf --image-quality 30 -o pdfs/compressed.pdf
+```
+
+Best results come from image-heavy PDFs. Text-only PDFs may not shrink much.
+
+The output path must be different from the input path, so commands cannot overwrite the original PDF.
+
 ## Remove pages
 
 Create a new PDF with selected pages removed. The original PDF is not modified.

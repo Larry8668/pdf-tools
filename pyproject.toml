@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pdf-tools"
 version = "0.1.0"
-description = "Small PDF toolkit for merging, converting images, removing pages, and redacting content."
+description = "Small PDF toolkit for merging, converting, compressing, and redacting content."
 requires-python = ">=3.12"
 dependencies = [
     "pillow>=12.2.0",
@@ -15,6 +15,7 @@ dependencies = [
 
 [project.scripts]
 pdf-merge = "pdf_tools.cli_merge:main"
+pdf-compress = "pdf_tools.cli_compress:main"
 pdf-remove-pages = "pdf_tools.cli_remove_pages:main"
 pdf-redact = "pdf_tools.cli_redact:main"
 pdf-redact-area = "pdf_tools.cli_redact_area:main"
