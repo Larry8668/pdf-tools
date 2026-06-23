@@ -28,6 +28,26 @@ uv run pdf-merge images/photo.png -o pdfs/photo.pdf
 
 Supported image types: `.bmp`, `.gif`, `.jpeg`, `.jpg`, `.png`, `.tif`, `.tiff`, `.webp`.
 
+## Pad image to square
+
+Make a rectangular image square by adding black borders. The original image is not modified.
+
+```bash
+uv run image-pad-square images/photo.png -o images/photo-square.png
+```
+
+The output canvas is `max(width, height) x max(width, height)`, with your image centered.
+
+For an exact upload size like 1024×1024:
+
+```bash
+uv run image-pad-square images/photo.png --size 1024 -o images/photo-1024.png
+```
+
+If the image is larger than the target, it is scaled down to fit first, then padded with black borders.
+
+The output path must be different from the input path.
+
 ## Compress
 
 Create a smaller PDF copy. The original PDF is not modified.
