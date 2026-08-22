@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pymupdf
 
+from pdf_tools.formatting import format_bytes
+
 logger = logging.getLogger(__name__)
 
 _MIN_IMAGE_QUALITY = 5
@@ -54,8 +56,8 @@ def compress_pdf(
     output_bytes = out.stat().st_size
     logger.info(
         "Compressed PDF: %s -> %s (%.1f%% of original)",
-        _format_bytes(input_bytes),
-        _format_bytes(output_bytes),
+        format_bytes(input_bytes),
+        format_bytes(output_bytes),
         (output_bytes / input_bytes) * 100 if input_bytes else 0,
     )
     return input_bytes, output_bytes
@@ -84,8 +86,8 @@ def _find_image_quality(source: Path, target_bytes: int) -> int:
         if best_size > target_bytes:
             logger.warning(
                 "Could not reach target size %s; best effort is %s at quality %d",
-                _format_bytes(target_bytes),
-                _format_bytes(best_size),
+                format_bytes(target_bytes),
+                format_bytes(best_size),
                 best_quality,
             )
 
@@ -106,11 +108,3 @@ def _write_compressed_pdf(source: Path, output: Path, image_quality: int) -> int
             clean=True,
         )
     return output.stat().st_size
-
-
-def _format_bytes(size: int) -> str:
-    if size < 1024:
-        return f"{size} B"
-    if size < 1024 * 1024:
-        return f"{size / 1024:.1f} KB"
-    return f"{size / (1024 * 1024):.1f} MB"

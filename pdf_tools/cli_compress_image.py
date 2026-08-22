@@ -1,4 +1,4 @@
-"""CLI: compress a PDF into a new smaller output PDF."""
+"""CLI: compress an image into a new smaller output image."""
 
 from __future__ import annotations
 
@@ -7,32 +7,36 @@ import logging
 import sys
 from pathlib import Path
 
-from pdf_tools.compress import compress_pdf
+from pdf_tools.compress_image import compress_image
 from pdf_tools.formatting import format_bytes
 
 
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Compress a PDF and write a new smaller PDF.",
+        description="Compress an image and write a new smaller image.",
     )
-    p.add_argument("input", type=Path, help="Input PDF path")
+    p.add_argument("input", type=Path, help="Input image path")
     p.add_argument(
         "-o",
         "--output",
         type=Path,
         required=True,
-        help="Path for the compressed PDF",
+        help="Path for the compressed image",
     )
-    size_group = p.add_mutually_exclusive_group(required=True)
-    size_group.add_argument(
-        "--size-percent",
-        type=float,
-        help="Target output size as a percent of the input file size, for example 10 for ~100 KB from 1 MB.",
-    )
-    size_group.add_argument(
-        "--image-quality",
+    p.add_argument(
+        "--quality",
         type=int,
-        help="JPEG image quality from 1 (smallest) to 100 (largest).",
+        help="JPEG/WebP quality from 1 (smallest) to 95 (largest). Default: 75.",
+    )
+    p.add_argument(
+        "--max-width",
+        type=int,
+        help="Scale down so width is at most this many pixels.",
+    )
+    p.add_argument(
+        "--max-height",
+        type=int,
+        help="Scale down so height is at most this many pixels.",
     )
     p.add_argument(
         "-v",
@@ -50,11 +54,12 @@ def main() -> int:
         format="%(levelname)s: %(message)s",
     )
     try:
-        input_bytes, output_bytes = compress_pdf(
+        input_bytes, output_bytes = compress_image(
             args.input,
             args.output,
-            size_percent=args.size_percent,
-            image_quality=args.image_quality,
+            quality=args.quality,
+            max_width=args.max_width,
+            max_height=args.max_height,
         )
     except (FileNotFoundError, ValueError) as e:
         logging.error("%s", e)

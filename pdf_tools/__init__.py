@@ -1,6 +1,8 @@
 """PDF and image utility functions."""
 
 from pdf_tools.compress import compress_pdf
+from pdf_tools.compress_image import compress_image
+from pdf_tools.compress_video import compress_video
 from pdf_tools.image_pad import pad_image_to_square
 from pdf_tools.merge import merge_files, merge_pdfs, merge_two_pdfs
 from pdf_tools.redact import redact_pdf
@@ -11,6 +13,8 @@ from pdf_tools.render_page import render_page
 __all__ = [
     "PageArea",
     "compress_pdf",
+    "compress_image",
+    "compress_video",
     "pad_image_to_square",
     "merge_files",
     "merge_pdfs",

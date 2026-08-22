@@ -16,7 +16,9 @@ dependencies = [
 [project.scripts]
 pdf-merge = "pdf_tools.cli_merge:main"
 pdf-compress = "pdf_tools.cli_compress:main"
+image-compress = "pdf_tools.cli_compress_image:main"
 image-pad-square = "pdf_tools.cli_image_pad_square:main"
+video-compress = "pdf_tools.cli_compress_video:main"
 pdf-remove-pages = "pdf_tools.cli_remove_pages:main"
 pdf-redact = "pdf_tools.cli_redact:main"
 pdf-redact-area = "pdf_tools.cli_redact_area:main"

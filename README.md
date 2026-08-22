@@ -1,10 +1,10 @@
 # PDF tools
 
-Put PDFs in **`pdfs/`** and images in **`images/`**. The input order controls the output order.
+Put PDFs in **`pdfs/`**, images in **`images/`**, and videos in **`videos/`**. The input order controls the output order for merge.
 
 ## Setup
 
-Requires Python and `uv`.
+Requires Python and `uv`. Video compression also needs `ffmpeg` on your PATH (`brew install ffmpeg`).
 
 ```bash
 uv sync
@@ -69,6 +69,52 @@ uv run pdf-compress pdfs/input.pdf --image-quality 30 -o pdfs/compressed.pdf
 Best results come from image-heavy PDFs. Text-only PDFs may not shrink much.
 
 The output path must be different from the input path, so commands cannot overwrite the original PDF.
+
+## Compress an image
+
+Create a smaller image copy. The original image is not modified.
+
+```bash
+uv run image-compress images/photo.png --quality 75 -o images/photo.jpg
+```
+
+Optional: cap dimensions while compressing:
+
+```bash
+uv run image-compress images/photo.png --quality 70 --max-width 1600 --max-height 1600 -o images/photo.jpg
+```
+
+JPEG and WebP use `--quality` (default 75). PNG output is lossless and only packed more tightly.
+
+The output path must be different from the input path.
+
+## Compress a video
+
+Requires `ffmpeg` on your PATH (`brew install ffmpeg`). The original video is not modified.
+
+```bash
+uv run video-compress videos/input.mov --screenshare -o videos/input-compressed.mp4
+```
+
+`--screenshare` scales height to at most 1080 and uses 30 fps. That is the right default for UI recordings.
+
+Or set the knobs yourself:
+
+```bash
+uv run video-compress videos/input.mov --crf 28 --preset medium --max-height 1080 --fps 30 -o videos/input-compressed.mp4
+```
+
+Lower CRF keeps more quality (and a larger file). `--crf 32` is smaller; `--crf 24` is sharper.
+
+Drop the soundtrack:
+
+```bash
+uv run video-compress videos/input.mov --screenshare --no-audio -o videos/input-compressed.mp4
+```
+
+Supported video types: `.avi`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.mpeg`, `.mpg`, `.webm`. Output is `.mp4`, `.mov`, or `.mkv`.
+
+The output path must be different from the input path.
 
 ## Remove pages
 
