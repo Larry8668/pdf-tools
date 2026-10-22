@@ -66,7 +66,7 @@ def main() -> int:
         print(f"Grid size: {args.grid_size} pixels")
     print(
         "Use pixel coordinates from this image with "
-        f"`pdf-redact-area {args.input} --page {args.page} --pixels "
+        f"`pdf-tools redact-area {args.input} --page {args.page} --pixels "
         '"x0,y0,x1,y1" --scale '
         f"{args.scale:g} -o redacted.pdf`"
     )
