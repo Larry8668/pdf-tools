@@ -2,17 +2,30 @@
 
 Offline command-line tools for PDFs, images and videos. Everything runs on your machine; nothing is uploaded.
 
+Everything is one command, `pdf-tools`, followed by what you want to do:
+
 | Command | What it does |
 | --- | --- |
-| `pdf-merge` | Merge PDFs and images into one PDF, or turn an image into a PDF |
-| `pdf-compress` | Shrink a PDF by recompressing its images |
-| `pdf-remove-pages` | Drop pages from a PDF |
-| `pdf-redact` | Remove searchable text, such as names or account numbers |
-| `pdf-render-page` | Render a page to an image, optionally with a pixel grid |
-| `pdf-redact-area` | Black out or blank a rectangle, such as a signature or photo |
-| `image-pad-square` | Pad an image to a square, for avatar or upload size limits |
-| `image-compress` | Shrink an image, optionally capping its dimensions |
-| `video-compress` | Shrink a video with FFmpeg, with a screen-recording preset |
+| `pdf-tools merge` | Merge PDFs and images into one PDF, or turn an image into a PDF |
+| `pdf-tools compress` | Shrink a PDF by recompressing its images |
+| `pdf-tools remove-pages` | Drop pages from a PDF |
+| `pdf-tools redact` | Remove searchable text, such as names or account numbers |
+| `pdf-tools render-page` | Render a page to an image, optionally with a pixel grid |
+| `pdf-tools redact-area` | Black out or blank a rectangle, such as a signature or photo |
+| `pdf-tools image-pad-square` | Pad an image to a square, for avatar or upload size limits |
+| `pdf-tools image-compress` | Shrink an image, optionally capping its dimensions |
+| `pdf-tools video-compress` | Shrink a video with FFmpeg, with a screen-recording preset |
+
+## Help
+
+```bash
+pdf-tools                  # list every command, with examples
+pdf-tools help redact      # options for one command
+pdf-tools redact --help    # same thing
+pdf-tools --version
+```
+
+A mistyped command suggests the closest one, for example `pdf-tools mrge` asks whether you meant `merge`.
 
 ## Install
 
@@ -24,11 +37,13 @@ brew trust Larry8668/pdf-tools     # Homebrew 7+: third-party taps must be trust
 brew install pdf-tools
 ```
 
-This puts every command above on your PATH and installs `ffmpeg` and Python 3.13 as dependencies, if you don't have them. Update with `brew upgrade pdf-tools`.
+This puts `pdf-tools` on your PATH and installs `ffmpeg` and Python 3.13 as dependencies, if you don't have them. Update with `brew upgrade pdf-tools`.
+
+Upgrading from 0.1.0: the separate `pdf-merge`, `pdf-redact`, … commands were replaced by `pdf-tools merge`, `pdf-tools redact`, …, with the same options.
 
 ### From source
 
-Requires Python 3.12+ and [`uv`](https://docs.astral.sh/uv/). `video-compress` also needs `ffmpeg` on your PATH (`brew install ffmpeg`).
+Requires Python 3.12+ and [`uv`](https://docs.astral.sh/uv/). `pdf-tools video-compress` also needs `ffmpeg` on your PATH (`brew install ffmpeg`).
 
 ```bash
 git clone https://github.com/Larry8668/pdf-tools.git
@@ -36,7 +51,7 @@ cd pdf-tools
 uv sync
 ```
 
-From a source checkout, put `uv run` in front of every command in this README, for example `uv run pdf-merge ...`.
+From a source checkout, put `uv run` in front of every command in this README, for example `uv run pdf-tools merge ...`.
 
 ## Where files go
 
@@ -53,7 +68,7 @@ The repo has empty `pdfs/`, `images/`, `videos/` and `previews/` folders, ignore
 The input order is the page order in the output.
 
 ```bash
-pdf-merge pdfs/first.pdf images/photo.png pdfs/second.pdf -o pdfs/merged.pdf
+pdf-tools merge pdfs/first.pdf images/photo.png pdfs/second.pdf -o pdfs/merged.pdf
 ```
 
 Use your real names instead of `first.pdf` / `photo.png` / `second.pdf` / `merged.pdf`. You can pass one or more inputs, mixing PDFs and images in any order.
@@ -61,7 +76,7 @@ Use your real names instead of `first.pdf` / `photo.png` / `second.pdf` / `merge
 To convert a single image into a PDF:
 
 ```bash
-pdf-merge images/photo.png -o pdfs/photo.pdf
+pdf-tools merge images/photo.png -o pdfs/photo.pdf
 ```
 
 Supported image types: `.bmp`, `.gif`, `.jpeg`, `.jpg`, `.png`, `.tif`, `.tiff`, `.webp`.
@@ -71,7 +86,7 @@ Supported image types: `.bmp`, `.gif`, `.jpeg`, `.jpg`, `.png`, `.tif`, `.tiff`,
 Make a rectangular image square by adding black borders. The original image is not modified.
 
 ```bash
-image-pad-square images/photo.png -o images/photo-square.png
+pdf-tools image-pad-square images/photo.png -o images/photo-square.png
 ```
 
 The output canvas is `max(width, height) x max(width, height)`, with your image centered.
@@ -79,7 +94,7 @@ The output canvas is `max(width, height) x max(width, height)`, with your image 
 For an exact upload size like 1024×1024:
 
 ```bash
-image-pad-square images/photo.png --size 1024 -o images/photo-1024.png
+pdf-tools image-pad-square images/photo.png --size 1024 -o images/photo-1024.png
 ```
 
 If the image is larger than the target, it is scaled down to fit first, then padded with black borders.
@@ -93,7 +108,7 @@ Create a smaller PDF copy. The original PDF is not modified.
 Target a percentage of the original file size:
 
 ```bash
-pdf-compress pdfs/input.pdf --size-percent 10 -o pdfs/compressed.pdf
+pdf-tools compress pdfs/input.pdf --size-percent 10 -o pdfs/compressed.pdf
 ```
 
 The example above aims for about 10% of the input size, so roughly 100 KB from a 1 MB file.
@@ -101,7 +116,7 @@ The example above aims for about 10% of the input size, so roughly 100 KB from a
 Or set image quality directly:
 
 ```bash
-pdf-compress pdfs/input.pdf --image-quality 30 -o pdfs/compressed.pdf
+pdf-tools compress pdfs/input.pdf --image-quality 30 -o pdfs/compressed.pdf
 ```
 
 Best results come from image-heavy PDFs. Text-only PDFs may not shrink much.
@@ -113,13 +128,13 @@ The output path must be different from the input path, so commands cannot overwr
 Create a smaller image copy. The original image is not modified.
 
 ```bash
-image-compress images/photo.png --quality 75 -o images/photo.jpg
+pdf-tools image-compress images/photo.png --quality 75 -o images/photo.jpg
 ```
 
 Optional: cap dimensions while compressing:
 
 ```bash
-image-compress images/photo.png --quality 70 --max-width 1600 --max-height 1600 -o images/photo.jpg
+pdf-tools image-compress images/photo.png --quality 70 --max-width 1600 --max-height 1600 -o images/photo.jpg
 ```
 
 JPEG and WebP use `--quality` (default 75). PNG output is lossless and only packed more tightly.
@@ -131,7 +146,7 @@ The output path must be different from the input path.
 Requires `ffmpeg` on your PATH (`brew install ffmpeg`). The original video is not modified.
 
 ```bash
-video-compress videos/input.mov --screenshare -o videos/input-compressed.mp4
+pdf-tools video-compress videos/input.mov --screenshare -o videos/input-compressed.mp4
 ```
 
 `--screenshare` scales height to at most 1080 and uses 30 fps. That is the right default for UI recordings.
@@ -139,7 +154,7 @@ video-compress videos/input.mov --screenshare -o videos/input-compressed.mp4
 Or set the knobs yourself:
 
 ```bash
-video-compress videos/input.mov --crf 28 --preset medium --max-height 1080 --fps 30 -o videos/input-compressed.mp4
+pdf-tools video-compress videos/input.mov --crf 28 --preset medium --max-height 1080 --fps 30 -o videos/input-compressed.mp4
 ```
 
 Lower CRF keeps more quality (and a larger file). `--crf 32` is smaller; `--crf 24` is sharper.
@@ -147,7 +162,7 @@ Lower CRF keeps more quality (and a larger file). `--crf 32` is smaller; `--crf 
 Drop the soundtrack:
 
 ```bash
-video-compress videos/input.mov --screenshare --no-audio -o videos/input-compressed.mp4
+pdf-tools video-compress videos/input.mov --screenshare --no-audio -o videos/input-compressed.mp4
 ```
 
 Supported video types: `.avi`, `.m4v`, `.mkv`, `.mov`, `.mp4`, `.mpeg`, `.mpg`, `.webm`. Output is `.mp4`, `.mov`, or `.mkv`.
@@ -159,7 +174,7 @@ The output path must be different from the input path.
 Create a new PDF with selected pages removed. The original PDF is not modified.
 
 ```bash
-pdf-remove-pages pdfs/input.pdf --pages "1,3,5-7" -o pdfs/output.pdf
+pdf-tools remove-pages pdfs/input.pdf --pages "1,3,5-7" -o pdfs/output.pdf
 ```
 
 Page numbers are 1-based. The example removes pages 1, 3, 5, 6, and 7.
@@ -171,19 +186,19 @@ The output path must be different from the input path, so commands cannot overwr
 Create a new PDF with matching text redacted. The original PDF is not modified.
 
 ```bash
-pdf-redact pdfs/input.pdf --term "secret name" --term "account number" -o pdfs/redacted.pdf
+pdf-tools redact pdfs/input.pdf --term "secret name" --term "account number" -o pdfs/redacted.pdf
 ```
 
 For a list of terms, use a comma-separated list:
 
 ```bash
-pdf-redact pdfs/input.pdf --terms "secret name,account number,email@example.com" -o pdfs/redacted.pdf
+pdf-tools redact pdfs/input.pdf --terms "secret name,account number,email@example.com" -o pdfs/redacted.pdf
 ```
 
 Or put terms in a text file, one per line:
 
 ```bash
-pdf-redact pdfs/input.pdf --terms-file terms.txt -o pdfs/redacted.pdf
+pdf-tools redact pdfs/input.pdf --terms-file terms.txt -o pdfs/redacted.pdf
 ```
 
 Blank lines are ignored. Lines starting with `#` are treated as comments.
@@ -191,13 +206,13 @@ Blank lines are ignored. Lines starting with `#` are treated as comments.
 By default, matches are blacked out. You can also remove text visually with a white blank area:
 
 ```bash
-pdf-redact pdfs/input.pdf --term "secret name" --mode remove -o pdfs/redacted.pdf
+pdf-tools redact pdfs/input.pdf --term "secret name" --mode remove -o pdfs/redacted.pdf
 ```
 
 Or replace matching text with another label:
 
 ```bash
-pdf-redact pdfs/input.pdf --term "secret name" --replacement "REDACTED" -o pdfs/redacted.pdf
+pdf-tools redact pdfs/input.pdf --term "secret name" --replacement "REDACTED" -o pdfs/redacted.pdf
 ```
 
 This works on searchable/text PDFs. Scanned PDFs or image-only PDFs may not work unless they have an OCR text layer.
@@ -209,7 +224,7 @@ The output path must be different from the input path, so commands cannot overwr
 Render a page preview first:
 
 ```bash
-pdf-render-page pdfs/input.pdf --page 1 -o previews/page-1.png
+pdf-tools render-page pdfs/input.pdf --page 1 -o previews/page-1.png
 ```
 
 The command prints the PDF size, image size, and render scale. Open the PNG and note the rectangle pixel coordinates for the area you want to hide.
@@ -217,7 +232,7 @@ The command prints the PDF size, image size, and render scale. Open the PNG and 
 For easier coordinate picking, render with a labeled grid:
 
 ```bash
-pdf-render-page pdfs/input.pdf --page 1 --grid-size 100 -o previews/page-1-grid.png
+pdf-tools render-page pdfs/input.pdf --page 1 --grid-size 100 -o previews/page-1-grid.png
 ```
 
 Use a smaller grid size, like `--grid-size 50`, when you need a tighter estimate.
@@ -225,15 +240,15 @@ Use a smaller grid size, like `--grid-size 50`, when you need a tighter estimate
 Then redact that rectangle:
 
 ```bash
-pdf-redact-area pdfs/input.pdf --page 1 --pixels "200,300,600,420" --scale 2 -o pdfs/redacted.pdf
+pdf-tools redact-area pdfs/input.pdf --page 1 --pixels "200,300,600,420" --scale 2 -o pdfs/redacted.pdf
 ```
 
-Pixel coordinates use `x0,y0,x1,y1` from the rendered preview. The `--scale` value should match the scale printed by `pdf-render-page`.
+Pixel coordinates use `x0,y0,x1,y1` from the rendered preview. The `--scale` value should match the scale printed by `pdf-tools render-page`.
 
 You can also use direct PDF-point coordinates:
 
 ```bash
-pdf-redact-area pdfs/input.pdf --area "1:100,150,300,210" -o pdfs/redacted.pdf
+pdf-tools redact-area pdfs/input.pdf --area "1:100,150,300,210" -o pdfs/redacted.pdf
 ```
 
 By default, areas are blacked out. Use `--mode remove` or `--mode white` for a blank white area.
