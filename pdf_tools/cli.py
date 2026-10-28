@@ -44,6 +44,8 @@ GROUPS: list[tuple[str, list[Command]]] = [
                     "image-compress photo.png --quality 70 -o photo.jpg"),
             Command("image-pad-square", "cli_image_pad_square", "Pad an image to a square",
                     "image-pad-square photo.png --size 1024 -o square.png"),
+            Command("image-remove-bg", "cli_remove_bg", "Remove the background from an image, locally",
+                    "image-remove-bg photo.jpg -o photo.png"),
         ],
     ),
     (
