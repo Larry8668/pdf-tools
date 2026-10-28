@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -29,9 +30,10 @@ def test_unknown_command_suggests_closest(capsys):
 
 @pytest.mark.parametrize("name", sorted(COMMANDS))
 def test_every_command_has_help(name):
-    # A subprocess, because each tool's argparse exits the interpreter on --help.
+    # The installed entry point in a subprocess, because each tool's argparse exits
+    # the interpreter on --help (and `python -m` would change the usage line).
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_tools.cli", "help", name],
+        [Path(sys.executable).parent / "pdf-tools", "help", name],
         capture_output=True, text=True,
     )
     assert result.returncode == 0, result.stderr

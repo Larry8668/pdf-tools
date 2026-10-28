@@ -13,6 +13,7 @@ import dataclasses
 import hashlib
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -20,6 +21,8 @@ from PIL import Image
 
 from conftest import sha256
 from pdf_tools import remove_bg as rb
+
+PDF_TOOLS = Path(sys.executable).parent / "pdf-tools"
 
 
 def _write_fake_model(path):
@@ -282,7 +285,7 @@ def test_strip_processing_matches_whole_image(monkeypatch):
 def test_cli_end_to_end(fake_model, square_photo, tmp_path):
     out = tmp_path / "cli.png"
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_tools.cli", "image-remove-bg", str(square_photo),
+        [PDF_TOOLS, "image-remove-bg", str(square_photo),
          "-o", str(out)],
         capture_output=True, text=True,
     )
@@ -293,7 +296,7 @@ def test_cli_end_to_end(fake_model, square_photo, tmp_path):
 
 def test_cli_error_exit_code(tmp_path):
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_tools.cli", "image-remove-bg", str(tmp_path / "nope.jpg"),
+        [PDF_TOOLS, "image-remove-bg", str(tmp_path / "nope.jpg"),
          "-o", str(tmp_path / "o.png")],
         capture_output=True, text=True,
     )
