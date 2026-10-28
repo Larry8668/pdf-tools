@@ -14,6 +14,7 @@ Everything is one command, `pdf-tools`, followed by what you want to do:
 | `pdf-tools redact-area` | Black out or blank a rectangle, such as a signature or photo |
 | `pdf-tools image-pad-square` | Pad an image to a square, for avatar or upload size limits |
 | `pdf-tools image-compress` | Shrink an image, optionally capping its dimensions |
+| `pdf-tools image-remove-bg` | Remove the background from a photo, like remove.bg but on your machine |
 | `pdf-tools video-compress` | Shrink a video with FFmpeg, with a screen-recording preset |
 
 ## Help
@@ -141,6 +142,44 @@ JPEG and WebP use `--quality` (default 75). PNG output is lossless and only pack
 
 The output path must be different from the input path.
 
+## Remove an image background
+
+Cut the subject out of a photo and save it with a transparent background. The original image is not modified, and the image never leaves your machine.
+
+```bash
+pdf-tools image-remove-bg images/photo.jpg -o images/photo-no-bg.png
+```
+
+The first run downloads the model once (about 220 MB) to `~/.cache/pdf-tools/models`, checks it against a pinned SHA-256, and reuses it from then on. Set `PDF_TOOLS_MODEL_DIR` to keep models somewhere else.
+
+Put the subject on a solid colour, cropped tight, for example for a product listing:
+
+```bash
+pdf-tools image-remove-bg images/photo.jpg --bg-color white --crop -o images/product.jpg
+```
+
+`--bg-color` takes a name like `white` or a hex value like `'#1e90ff'`. Use `.png` or `.webp` to keep transparency; `.jpg` has none, so it gets a white background unless you pick a colour.
+
+Several images at once, written to a folder as `<name>-no-bg.png`:
+
+```bash
+pdf-tools image-remove-bg images/a.jpg images/b.jpg images/c.jpg -o images/no-bg/
+```
+
+`--mask-only` writes the black-and-white mask instead of the cutout.
+
+Pick a model with `--model`:
+
+| Model | Download | Time per photo* | Peak memory | Notes |
+| --- | --- | --- | --- | --- |
+| `birefnet-lite` (default) | 224 MB | ~5 s | ~9 GB | Clean edges on hair, fur and busy backgrounds |
+| `birefnet` | 973 MB | ~11 s | ~11 GB | Slightly finer edges; may keep only the main subject |
+| `isnet` | 179 MB | ~1.5 s | ~2.5 GB | Fastest; fine for products, weaker on hair and clutter |
+
+\*On an Apple M4 CPU, for a typical photo. On a Mac with 8 GB of memory, use `--model isnet`.
+
+The models are [BiRefNet](https://github.com/ZhengPeng7/BiRefNet) (MIT) and [IS-Net](https://github.com/xuebinqin/DIS) (Apache-2.0), using the ONNX exports published by [rembg](https://github.com/danielgatis/rembg).
+
 ## Compress a video
 
 Requires `ffmpeg` on your PATH (`brew install ffmpeg`). The original video is not modified.
@@ -256,6 +295,14 @@ By default, areas are blacked out. Use `--mode remove` or `--mode white` for a b
 The output path must be different from the input path, so commands cannot overwrite the original PDF.
 
 Optional: add `-v` to any command for debug logs.
+
+## Running tests
+
+```bash
+uv run pytest
+```
+
+Tests build their own small PDFs, images and videos, so no sample files are needed. `video-compress` tests skip without `ffmpeg`. Background removal is tested with a tiny stand-in model; tests against the real models run only when those are already downloaded (run `pdf-tools image-remove-bg` once). GitHub Actions runs the suite on macOS and Linux for every push.
 
 ## Changing dependencies
 

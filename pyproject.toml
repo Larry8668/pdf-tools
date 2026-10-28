@@ -4,10 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pdf-tools"
-version = "0.2.0"
-description = "Offline tools to merge, compress and redact PDFs, plus image and video compression."
+version = "0.3.0"
+description = "Offline tools to merge, compress and redact PDFs, plus image background removal and image and video compression."
 requires-python = ">=3.12"
 dependencies = [
+    "numpy>=2.5.4",
+    "onnxruntime>=1.31.1",
     "pillow>=12.2.0",
     "pymupdf>=1.27.2.3",
     "pypdf>=6.9.2",
@@ -15,3 +17,14 @@ dependencies = [
 
 [project.scripts]
 pdf-tools = "pdf_tools.cli:main"
+
+[dependency-groups]
+dev = [
+    "onnx>=1.23.2",
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tests"]
+markers = ["real_model: needs a downloaded background-removal model; skipped otherwise"]

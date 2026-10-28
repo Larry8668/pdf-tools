@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          # Same Python as the Homebrew formula; onnxruntime has no wheels for newer ones yet.
+          python-version: "3.13"
+      - name: Install ffmpeg
+        run: |
+          if [ "$RUNNER_OS" = macOS ]; then brew install ffmpeg; else sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+      # Real background-removal models are not downloaded here; those tests skip.
+      - run: uv run pytest -q
