@@ -33,6 +33,8 @@ GROUPS: list[tuple[str, list[Command]]] = [
                     'redact doc.pdf --terms "Jane Doe,12345" -o redacted.pdf'),
             Command("render-page", "cli_render_page", "Render a page to an image, optionally with a pixel grid",
                     "render-page doc.pdf --page 1 --grid-size 100 -o page1.png"),
+            Command("edit-text", "cli_edit_text", "Replace text, such as a misspelled name, in place",
+                    'edit-text offer.pdf --find "Jon Smith" --replace "John Smith" -o fixed.pdf'),
             Command("redact-area", "cli_redact_area", "Black out or blank a rectangle on a page",
                     'redact-area doc.pdf --page 1 --pixels "200,300,600,420" -o redacted.pdf'),
         ],
